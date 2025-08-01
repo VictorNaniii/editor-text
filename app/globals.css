@@ -24,3 +24,96 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Editor-specific styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  /* Content editable editor styles */
+  [contenteditable] {
+    outline: none;
+  }
+
+  [contenteditable]:empty:before {
+    content: attr(placeholder);
+    color: #9ca3af;
+    font-style: italic;
+  }
+
+  /* Search highlight styles */
+  .search-highlight {
+    border-radius: 2px;
+    padding: 1px 2px;
+    transition: all 0.2s ease;
+  }
+
+  /* Print styles */
+  @media print {
+    .toolbar,
+    .status-bar,
+    .find-replace {
+      display: none !important;
+    }
+
+    .editor-content {
+      box-shadow: none !important;
+      border: none !important;
+    }
+  }
+
+  /* Mobile responsive adjustments */
+  @media (max-width: 768px) {
+    .toolbar {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .toolbar > div {
+      border-right: none !important;
+      padding-right: 0 !important;
+      margin-bottom: 0.5rem;
+    }
+
+    .find-replace .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Dark mode transitions */
+  * {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+  }
+}
+
+/* Focus styles for accessibility */
+@layer utilities {
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+  }
+}
