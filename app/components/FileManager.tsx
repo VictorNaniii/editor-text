@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface FileManagerProps {
   onSave: () => void;
@@ -13,16 +13,17 @@ interface FileManagerProps {
 }
 
 export function FileManager({
-  onSave,
-  onLoad,
-  onNew,
-  onExportText,
-  onExportHTML,
-  fileName,
-  onFileNameChange,
-}: FileManagerProps) {
+                              onSave,
+                              onLoad,
+                              onNew,
+                              onExportText,
+                              onExportHTML,
+                              fileName,
+                              onFileNameChange,
+                            }: FileManagerProps) {
   const [showMenu, setShowMenu] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -46,100 +47,108 @@ export function FileManager({
     setShowMenu(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
+
   return (
-    <div className="relative">
-      <button
-        onClick={() => setShowMenu(!showMenu)}
-        className="px-3 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium"
-      >
-        File
-      </button>
-      
-      {showMenu && (
-        <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10">
-          <div className="py-1">
-            <button
-              onClick={handleNewDocument}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              📄 New Document (Ctrl+N)
-            </button>
-            
-            <button
-              onClick={() => {
-                fileInputRef.current?.click();
-                setShowMenu(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              📁 Open File
-            </button>
-            
-            <button
-              onClick={() => {
-                onSave();
-                setShowMenu(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              💾 Save (Ctrl+S)
-            </button>
-            
-            <hr className="my-1 border-gray-200 dark:border-gray-700" />
-            
-            <button
-              onClick={() => {
-                onExportText();
-                setShowMenu(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              📄 Export as Text (.txt)
-            </button>
-            
-            <button
-              onClick={() => {
-                onExportHTML();
-                setShowMenu(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              🌐 Export as HTML (.html)
-            </button>
-            
-            <hr className="my-1 border-gray-200 dark:border-gray-700" />
-            
-            <div className="px-4 py-2">
-              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                Document Name
-              </label>
-              <input
-                type="text"
-                value={fileName}
-                onChange={(e) => onFileNameChange(e.target.value)}
-                className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
-                placeholder="Document name"
-              />
+      <div className="relative" ref={menuRef}>
+        <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="px-3 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium"
+        >
+          File
+        </button>
+
+        {showMenu && (
+            <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+              <div className="py-1">
+                <button
+                    onClick={handleNewDocument}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  📄 New Document (Ctrl+N)
+                </button>
+
+                <button
+                    onClick={() => {
+                      fileInputRef.current?.click();
+                      setShowMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  📁 Open File
+                </button>
+
+                <button
+                    onClick={() => {
+                      onSave();
+                      setShowMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  💾 Save (Ctrl+S)
+                </button>
+
+                <hr className="my-1 border-gray-200 dark:border-gray-700" />
+
+                <button
+                    onClick={() => {
+                      onExportText();
+                      setShowMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  📄 Export as Text (.txt)
+                </button>
+
+                <button
+                    onClick={() => {
+                      onExportHTML();
+                      setShowMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  🌐 Export as HTML (.html)
+                </button>
+
+                <hr className="my-1 border-gray-200 dark:border-gray-700" />
+
+                <div className="px-4 py-2">
+                  <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Document Name
+                  </label>
+                  <input
+                      type="text"
+                      value={fileName}
+                      onChange={(e) => onFileNameChange(e.target.value)}
+                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                      placeholder="Document name"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-      
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".txt,.html,.htm"
-        onChange={handleFileImport}
-        className="hidden"
-      />
-      
-      {/* Click outside to close menu */}
-      {showMenu && (
-        <div
-          className="fixed inset-0 z-0"
-          onClick={() => setShowMenu(false)}
+        )}
+
+        <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt,.html,.htm"
+            onChange={handleFileImport}
+            className="hidden"
         />
-      )}
-    </div>
+      </div>
   );
 }

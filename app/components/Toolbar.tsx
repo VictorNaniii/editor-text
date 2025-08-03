@@ -18,6 +18,7 @@ import {
   FaPalette
 } from "react-icons/fa";
 import { MdFormatColorText } from "react-icons/md";
+import { ThemeToggle } from './ThemeToggle';
 
 interface ToolbarProps {
   onFormat: (command: string, value?: string) => void;
@@ -40,7 +41,7 @@ export function Toolbar({
   onHighlightColor,
   onInsertList,
   autosaveEnabled,
-  onToggleAutosave,
+  onToggleAutosave
 }: ToolbarProps) {
   const fontFamilies = [
     'Arial, sans-serif',
@@ -187,31 +188,6 @@ export function Toolbar({
             </button>
           </div>
 
-          {/* Additional Formatting */}
-          <div className="flex items-center gap-1 border-r border-gray-300 dark:border-gray-600 pr-3">
-            <button
-              onClick={() => onFormat('indent')}
-              className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              title="Indent"
-            >
-              <FaIndent className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onFormat('outdent')}
-              className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              title="Outdent"
-            >
-              <FaOutdent className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onFormat('removeFormat')}
-              className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              title="Clear Formatting"
-            >
-              <FaEraser className="w-4 h-4" />
-            </button>
-          </div>
-
           {/* Autosave Toggle */}
           <div className="flex items-center gap-2">
             <button
@@ -228,6 +204,11 @@ export function Toolbar({
                 {autosaveEnabled ? 'Auto' : 'Manual'}
               </span>
             </button>
+          </div>
+
+          {/* Theme Toggle */}
+          <div className="border-l border-gray-300 dark:border-gray-600 pl-3">
+            <ThemeToggle />
           </div>
         </div>
       </div>
